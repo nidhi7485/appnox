@@ -1,12 +1,16 @@
 const User = require('../model/User')
-const jwt = require('jsonwebtoken')
+const {
+  createJwt,
+  isValidToken,
+  attchCookiesToResponse,
+} = require('../utils/jwt')
 const userResgister = async (req, res) => {
   // console.log(req.body)
   try {
     const user = await User.create(req.body)
     const tokenUser = { id: user._id, email: user.email }
-    const token = jwt.sign(tokenUser, 'jwt-secret', { expiresIn: '1d' })
-    res.status(200).json({ tokenUser, token })
+    attchCookiesToResponse({ res, user: tokenUser })
+    res.status(200).json({ tokenUser })
   } catch (error) {
     res.json(error)
   }
